@@ -12,6 +12,7 @@ import {
     BriefcaseIcon,
     UserGroupIcon,
     ArrowLeftOnRectangleIcon,
+    ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
 import { LoadingIndicator } from "./LoadingIndicator";
 
@@ -203,6 +204,23 @@ const LightSidebar: React.FC<LayoutProps> = ({ children }) => {
                                         }`}
                                 />
                                 <span className="ms-3">Mitra Statistik</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="/user/laporan"
+                                className={`flex items-center p-2 rounded-lg group ${isActive("/admin/laporan")
+                                    ? "bg-blue-500 text-white"
+                                    : "text-gray-900 hover:bg-gray-100"
+                                    }`}
+                            >
+                                <ClipboardDocumentCheckIcon
+                                    className={`w-5 h-5 transition duration-75 ${isActive("/admin/laporan")
+                                        ? "text-white"
+                                        : "text-gray-500 group-hover:text-gray-900"
+                                        }`}
+                                />
+                                <span className="ms-3">Laporan Kegiatan</span>
                             </a>
                         </li>
                     </ul>

@@ -302,7 +302,7 @@ const LightSidebar: React.FC<LayoutProps> = ({ children }) => {
                                         : "text-gray-500 group-hover:text-gray-900"
                                         }`}
                                 />
-                                <span className="ms-3">Laporan</span>
+                                <span className="ms-3">Laporan Kegiatan</span>
                             </a>
                         </li>
                     </ul>
