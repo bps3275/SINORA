@@ -1,4 +1,3 @@
-// components/SignIn.tsx
 "use client";
 
 import { signIn } from "next-auth/react";
@@ -11,7 +10,8 @@ import { LoadingIndicator } from "./LoadingIndicator";
 export function SignIn() {
   const [nip, setNip] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [nipError, setNipError] = useState<string | null>(null); // Separate state for NIP errors
+  const [passwordError, setPasswordError] = useState<string | null>(null); // Separate state for Password errors
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -19,16 +19,27 @@ export function SignIn() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+    setNipError(null); // Clear previous NIP error
+    setPasswordError(null); // Clear previous Password error
+  
     const result = await signIn("credentials", { redirect: false, nip, password });
-
+  
     setLoading(false);
-
+  
     if (result?.error) {
-      setError(result.error);
+      // Parse the error message to set the appropriate field error
+      if (result.error.includes("NIP")) {
+        setNipError(result.error); // Set NIP error if the error is related to NIP
+      } else if (result.error.includes("Password") || result.error.includes("Kata sandi")) {
+        setPasswordError(result.error); // Set Password error if the error is related to Password
+      } else {
+        // If there's a general or unknown error, you can display a default message
+        setNipError(result.error); // This can be changed to handle other cases if necessary
+      }
     } else {
+      // Fetch the current session to get user role
       const session = await fetch("/api/auth/session").then((res) => res.json());
-
+  
       if (session?.user?.role === "admin") {
         router.push("/admin");
       } else if (session?.user?.role === "user") {
@@ -37,7 +48,7 @@ export function SignIn() {
         router.push("/");
       }
     }
-  };
+  };  
 
   return (
     <div className="w-full max-w-xs p-4 space-y-6 bg-white rounded-lg shadow-md sm:max-w-sm md:max-w-md sm:p-6 lg:p-8">
@@ -69,9 +80,7 @@ export function SignIn() {
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
             placeholder="Masukkan NIP Anda"
           />
-          {error === "NIP anda tidak terdaftar." && (
-            <p className="mt-1 text-sm text-red-600">{error}</p>
-          )}
+          {nipError && <p className="mt-1 text-sm text-red-600">{nipError}</p>}
         </div>
 
         <div>
@@ -104,9 +113,7 @@ export function SignIn() {
               )}
             </button>
           </div>
-          {error === "Password salah." && (
-            <p className="mt-1 text-sm text-red-600">{error}</p>
-          )}
+          {passwordError && <p className="mt-1 text-sm text-red-600">{passwordError}</p>}
         </div>
 
         <div className="flex items-center justify-between">
